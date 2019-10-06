@@ -11,7 +11,7 @@ class BaseParser
 public:
 	BaseParser();
 	vector<string> base_parse(const string& regular_expr, const string& input_str) const;
-	vector<string> base_parse(const string& regular_expr, const string& input_str, const string& sock_token);
+	vector<string> base_parse(const string& regular_expr, const string& input_str, const string& sock_token) const;
 	void parse(const string& input_str);
 	~BaseParser();
 private:

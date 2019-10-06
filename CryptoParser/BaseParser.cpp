@@ -1,6 +1,7 @@
 #include "BaseParser.hpp"
 #include<iostream>
 #include<regex>
+
 using std::regex;
 using std::smatch;
 
@@ -24,7 +25,7 @@ vector<string> BaseParser::base_parse(const string& regular_expr, const string& 
 	return resault;
 }
 
-vector<string> BaseParser::base_parse(const string& regular_expr, const string& input_str, const string& sock_token)
+vector<string> BaseParser::base_parse(const string& regular_expr, const string& input_str, const string& sock_token) const
 {
 	regex expr(sock_token +regular_expr);
 	smatch match;
@@ -37,7 +38,6 @@ vector<string> BaseParser::base_parse(const string& regular_expr, const string& 
 		beg = match.suffix().first;
 	}
 	return resault;
-	return vector<string>();
 }
 
 void BaseParser::parse(const string& input_str)
@@ -68,6 +68,7 @@ void BaseParser::parse(const string& input_str)
 	}
 	Tree::print(maintree);
 	Tree::FreeTree(maintree);
+	
 }
 
 BaseParser::~BaseParser()
