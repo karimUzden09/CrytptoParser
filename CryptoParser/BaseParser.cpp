@@ -6,13 +6,12 @@
 using std::regex;
 using std::smatch;
 namespace re = runtime;
-
 BaseParser::BaseParser()
 {
 
 }
 
-vector<string> BaseParser::base_parse(const string& regular_expr, const string& input_str) const
+StrContainer BaseParser::base_parse(ConstStr& regular_expr, ConstStr& input_str) const
 {
 	regex expr(regular_expr);
 	smatch match;
@@ -27,7 +26,7 @@ vector<string> BaseParser::base_parse(const string& regular_expr, const string& 
 	return resault;
 }
 
-vector<string> BaseParser::base_parse(const string& regular_expr, const string& input_str, const string& sock_token) const
+StrContainer BaseParser::base_parse(ConstStr& regular_expr, ConstStr& input_str, ConstStr& sock_token) const
 {
 	regex expr(sock_token +regular_expr);
 	smatch match;
@@ -43,7 +42,7 @@ vector<string> BaseParser::base_parse(const string& regular_expr, const string& 
 }
 
 
-vector<string> BaseParser::findeNA(const string& rngToken, const string& input_str) const
+StrContainer BaseParser::findeNA(ConstStr& rngToken, ConstStr& input_str) const
 {
 	regex expr("." + rngToken + "\\.GetBytes\\((.*?)\\)");
 	smatch match;
@@ -58,56 +57,8 @@ vector<string> BaseParser::findeNA(const string& rngToken, const string& input_s
 	return resault;
 }
 
-void BaseParser::parse(const string& input_str)
-{
-	sock_token_container = base_parse(RegularExpressions::SOCK_PARSE_EXPRESSION_1,input_str);
-	Tree::Brunch* maintree = nullptr;
-	if (!sock_token_container.empty())
-	{
-		for (const auto& sock_token : sock_token_container) {
-			Tree::add(sock_token, maintree);
-			sender_token_conatiner = base_parse(RegularExpressions::SENDER_PARSE_EXPRESSION_1, input_str, sock_token);
-			if (!sender_token_conatiner.empty())
-			{
-				for (const auto& sender_token : sender_token_conatiner)
-				{
-					Tree::add(sender_token, maintree);
-					encript_buffer_container = base_parse(RegularExpressions::ENCRYPT_BUFFER_EXPRESSION_1, input_str, sender_token);
-					if (!encript_buffer_container.empty())
-					{
-						//Tree::add(encript_buffer_container[0], maintree);
-						for (const auto& buffer_token : encript_buffer_container)
-						{
-							Tree::add(buffer_token, maintree);
-							auto crypto_provider = find_crypto_provider(input_str);
-							if (crypto_provider!= std::nullopt)
-							{
-								NaContainer =  findeNA(crypto_provider.value(), input_str);
-								Tree::add(NaContainer[0], maintree);
-							}
 
-						}
-					}
-				}
-				
-			}
-
-			else
-			{
-				std::cout << "Sender is not found" << std::endl;
-			}
-		}
-	}
-	else
-	{
-		std::cout << "Socked is not found Error " << static_cast<int32_t>(ParseErrors::SockNotFound) <<std::endl;
-	}
-	Tree::print(maintree);
-	Tree::FreeTree(maintree);
-	
-}
-
-void BaseParser::parse_v2(const string& input_str)
+void BaseParser::parse_v2(ConstStr& input_str)
 {
 	if (!input_str.empty())
 	{
@@ -122,30 +73,6 @@ void BaseParser::parse_v2(const string& input_str)
 
 BaseParser::~BaseParser()
 {
-}
-
-std::optional<string> BaseParser::find_crypto_provider(const string& input_str)
-{
-	crypto_servis_token_container = base_parse(RegularExpressions::CRYPTO_SERVIS_EXPRESSION_1, input_str);
-	if (!crypto_servis_token_container.empty())
-	{
-		return crypto_servis_token_container[0];
-	}
-	return std::nullopt;
-}
-
-inline void BaseParser::verefication(const std::string& token, const const string& input_str)
-{
-	sender_token_conatiner = base_parse(RegularExpressions::SENDER_PARSE_EXPRESSION_1, input_str,token);
-	if (!sender_token_conatiner.empty())
-	{
-		
-	}
-	else
-	{
-		printer::_println(re::SENDER_NOT_FOUND, re::SENDER_EMTY);
-	}
-
 }
 
 void BaseParser::finde_sock_tokens(ConstStr& str)
