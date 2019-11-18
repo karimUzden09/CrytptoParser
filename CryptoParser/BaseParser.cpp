@@ -28,7 +28,7 @@ StrContainer BaseParser::base_parse(ConstStr& regular_expr, ConstStr& input_str)
 
 StrContainer BaseParser::base_parse(ConstStr& regular_expr, ConstStr& input_str, ConstStr& sock_token) const
 {
-	regex expr(sock_token +regular_expr);
+	regex expr(sock_token + regular_expr);
 	smatch match;
 	vector<string> resault;
 	auto beg = input_str.cbegin();
